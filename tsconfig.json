@@ -23,6 +23,7 @@
       "@hooks/*": ["./src/hooks/*"],
       "@utils/*": ["./src/utils/*"],
       "@test-utils": ["./test-utils"],
+      "@models": ["./src/types/*"],
       
     }
   },
