@@ -4,10 +4,16 @@ import { useApi } from "@hooks/useApi";
 import { useState } from "react";
 import { ItemComponent } from "@components/Order/Item";
 
+type value = {
+    item: Item,
+    amount: number
+}
+
 export function OrderPage() {
     const { data, isLoading, error } = useApi<Item[]>('https://localhost:8081/api/v1/Items')
     const [activeCategory, setActiveCategory] = useState<string | null>('first');
-    
+    const [order, setOrder] = useState<Map<string,value>>(new Map())
+
     if (isLoading) {
         return (<div>Loading...</div>)
     }
@@ -17,7 +23,15 @@ export function OrderPage() {
         return (<div>Error!</div>)
     }
 
-    console.log(data)
+    const addToOrder = (item: Item) => {
+        setOrder(prevOrder => {
+            const newOrder = new Map(prevOrder); // Create a new Map instance
+            const amount = (newOrder.get(item.id)?.amount ?? 0) + 1;
+            newOrder.set(item.id, { item, amount });
+            return newOrder; // React will now detect the change and trigger a rerender
+        });
+    }
+
     return (
         <div style={{
             display: 'flex',
@@ -34,7 +48,7 @@ export function OrderPage() {
                         </Tabs.List>
                     </Tabs>
                     <SimpleGrid cols={6}>
-                    {data?.map(item => <ItemComponent item={ item } />)}
+                    {data?.map(item => <ItemComponent item={ item } onClick={() => addToOrder(item)} />)}
                     </SimpleGrid>
                 </div>
             </section>
@@ -44,7 +58,13 @@ export function OrderPage() {
             width: '180px',
             padding: '10px 20px'
         }}>
-            test
+            {Array.from(order.keys()).map(id => {
+                const amount = order.get(id)?.amount
+                const item = order.get(id)?.item
+                console.log(id)
+
+                return <div key={id}>{item?.name}: {amount}</div>
+            })}
         </section>
         </div>
     )

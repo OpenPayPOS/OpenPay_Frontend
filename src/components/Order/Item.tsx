@@ -1,13 +1,13 @@
 import { Item } from "../../types/item"
+import classes from './Item.module.css'
 
-export function ItemComponent({ item }: { item: Item }) {
+export function ItemComponent({ item, onClick }: { item: Item, onClick: () => void }) {
     console.log(item)
     return (
-            <div key={item.id} style={{
-                aspectRatio: '1',
-                backgroundColor: 'var(--mantine-primary-color-6)',
-                position: 'relative'
-            }}>
+            <button key={item.id} type="button" className={classes.order_display_item} style={{
+                backgroundImage: `url(${`http://localhost:3000/uploads/${item.imagePath}`})`
+            }} onClick={() => onClick()} onKeyDown={() => onClick()}>
+                <div className={classes.overlay} />
                 <p style={{
                     position: 'absolute',
                     bottom: '-2px',
@@ -18,8 +18,9 @@ export function ItemComponent({ item }: { item: Item }) {
                     borderRadius: '0 5px 0 0',
                     boxShadow: 'rgba(0, 0, 0, 0.2) 2px -2px 3px 2px'
                 }}>
+                    
                     {item.name}
                 </p>
-            </div>
+            </button>
         )
 }

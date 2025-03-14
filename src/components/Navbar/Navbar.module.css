@@ -1,0 +1,8 @@
+.navbar {
+    background-color: var(--mantine-color-gray-2);
+    height: 100%;
+
+    @mixin dark {
+        background-color: var(--mantine-color-dark-8);
+    }
+}

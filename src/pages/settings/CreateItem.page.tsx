@@ -1,5 +1,5 @@
 import { useApiAtAction } from "@hooks/useApi"
-import { ActionIcon, Button, Divider, NumberInput, Paper, TextInput } from "@mantine/core"
+import { ActionIcon, Button, Divider, FileButton, NumberInput, Paper, Text, TextInput } from "@mantine/core"
 import { useForm } from "@mantine/form"
 import { notifications } from "@mantine/notifications"
 import { IconArrowBackUp, IconCheck, IconX } from "@tabler/icons-react"
@@ -9,6 +9,9 @@ import { useNavigate } from "react-router-dom"
 
 export function CreateItemPage() {
     const [id, setId] = useState('')
+    const [file, setFile] = useState<File | null>(null);
+    const [preview, setPreviewImage] = useState<any>()
+
     const navigate = useNavigate()
     const { data, isLoading, error, fetchData, resetData } = useApiAtAction(`${BACKEND_URL}/api/v1/Items`, false)
     const form = useForm({
@@ -75,6 +78,18 @@ export function CreateItemPage() {
     
     }, [data])
 
+    useEffect(() => {
+        if (!file) {
+            setPreviewImage(undefined)
+            return
+        }
+
+        const objectUrl = URL.createObjectURL(file)
+        setPreviewImage(objectUrl)
+
+        // free memory when ever this component is unmounted
+        return () => URL.revokeObjectURL(objectUrl)
+    }, [file])
 
     return (
         <div style={{
@@ -99,12 +114,22 @@ export function CreateItemPage() {
                     <div style={{
                         display: 'flex',
                         justifyContent: 'space-between',
-                        gap: '20px'
+                        gap: '20px',
+                        alignItems: 'center'
                     }}>
                         
                         <NumberInput withAsterisk prefix="€" allowNegative={false} decimalScale={2} label="Price" placeholder="1" step={0.1} key={form.key('price')} {...form.getInputProps("price")} />
                         <NumberInput withAsterisk suffix="%" min={0} max={100} decimalScale={2} label="Tax percentage" placeholder="10" step={1} key={form.key('taxPercentage')} {...form.getInputProps("taxPercentage")} />
+                        <FileButton onChange={setFile} accept="image/png,image/jpeg">
+                            {(props) => <Button {...props}>Upload Image</Button>}
+                        </FileButton>
                     </div>
+                    {file && (
+                        <Text size="sm" ta="center" mt="sm">
+                        Picked file:
+                        <img alt={file.name} src={preview} />
+                        </Text>
+                    )}
                     <Divider style={{
                         margin: '20px 0 20px 0'
                     }}/>

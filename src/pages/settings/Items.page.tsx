@@ -2,6 +2,7 @@ import { useApi } from "@hooks/useApi";
 import { Paper, ScrollArea, Table } from "@mantine/core";
 import { Item } from "../../types/item";
 import { IconEdit, IconX } from "@tabler/icons-react";
+import { FloatingActionButton } from "@components/Shared/FloatingActionButton";
 
 export function ItemsPage() {
     const { data, isLoading, error } = useApi<Item[]>('https://localhost:8081/api/v1/Items')
@@ -60,6 +61,7 @@ export function ItemsPage() {
                     </Table>
                 </ScrollArea.Autosize>
             </Paper>
+            <FloatingActionButton />
         </div>
     )
 }
