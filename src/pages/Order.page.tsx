@@ -4,6 +4,9 @@ import { useApi } from "@hooks/useApi";
 import { useState } from "react";
 import { ItemComponent } from "@components/Order/Item";
 
+import classes from './Order.page.module.css'
+import { IconMinus, IconPlus } from "@tabler/icons-react";
+
 type value = {
     item: Item,
     amount: number
@@ -32,13 +35,22 @@ export function OrderPage() {
         });
     }
 
+    const getTotal = () => {
+        let total = 0;
+        order.entries().forEach(value => {
+            total += value[1].amount * value[1].item.price
+        })
+
+        return total
+    }
+
     return (
         <div style={{
             display: 'flex',
             height: '100%'
         }}>
             <section style={{
-                    width: 'calc(100% - 180px)'
+                    width: 'calc(100% - 250px)'
             }}>
                 <div>
                     <Tabs value={activeCategory} onChange={setActiveCategory}>
@@ -48,23 +60,33 @@ export function OrderPage() {
                         </Tabs.List>
                     </Tabs>
                     <SimpleGrid cols={6}>
-                    {data?.map(item => <ItemComponent item={ item } onClick={() => addToOrder(item)} />)}
+                    {data?.map(item => <ItemComponent key = {item.id} item={ item } onClick={() => addToOrder(item)} />)}
                     </SimpleGrid>
                 </div>
             </section>
-        <section style={{
-            backgroundColor: 'var(--mantine-primary-color-2)',
-            height: '100%',
-            width: '180px',
-            padding: '10px 20px'
-        }}>
+        <section className={classes.sidebar}>
             {Array.from(order.keys()).map(id => {
                 const amount = order.get(id)?.amount
                 const item = order.get(id)?.item
+                if (item === undefined) { return null } 
+                if (amount === undefined) { return null } 
                 console.log(id)
 
-                return <div key={id}>{item?.name}: {amount}</div>
+                return <div key={id} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                }}>
+                    <p>
+                        {item.name}: {amount} - € {item.price * amount}
+                    </p>
+                    <div>
+                    <IconPlus />
+                    <IconMinus />
+                    </div>
+                </div>
             })}
+            <div>Total: € {getTotal()}</div>
         </section>
         </div>
     )

@@ -1,0 +1,10 @@
+.sidebar {
+    background-color: var(--mantine-color-gray-2);
+    height: 100%;
+    width: 250px;
+    padding: 10px 20px;
+
+    @mixin dark {
+        background-color: var(--mantine-color-dark-6);
+    }
+}
